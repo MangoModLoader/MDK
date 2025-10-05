@@ -1,0 +1,83 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url = "https://maven.mangorage.org/releases/"
+        }
+    }
+
+    dependencies {
+        classpath 'org.mangorage:mangomodloadergradle:1.0.3'
+    }
+}
+
+plugins {
+    id 'java'
+    id "net.minecraftforge.jarjar" version "0.1.0"
+    id 'org.gradlex.extra-java-module-info' version '1.12'
+    id 'net.minecraftforge.gradle' version '+'
+}
+
+apply plugin: 'MML'
+
+group = 'org.mangorage'
+version = '1.0-SNAPSHOT'
+
+jarJar.register() {
+    it.archiveClassifier = ""
+}
+
+extraJavaModuleInfo {
+    setDeriveAutomaticModuleNamesFromFileNames(true)
+    automaticModule('net.minecraft:joined', "minecraft")
+}
+
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url = "https://maven.minecraftforge.net/"
+    }
+    maven {
+        url = uri("https://maven.terraformersmc.com/")
+    }
+    maven {
+        url = "https://maven.mangorage.org/releases"
+    }
+
+    maven minecraft.maven
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.21.9'
+}
+
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    compileOnly minecraft.dep('net.minecraft:joined:1.21.9')
+    compileOnly("org.mangorage:mangomodloader-api:1.1.3")
+
+    modJar(project(":"))
+
+    bootJar("org.mangorage:mangomodloader:1.1.3:all")
+
+    gameJar(minecraft.dep('net.minecraft:joined:1.21.9')) {
+        attributes {
+            attribute(Attribute.of("net.minecraftforge.native.operatingSystem", String), "windows")
+        }
+    }
+
+    // SpongeMixin...
+    compileOnly('net.fabricmc:sponge-mixin:0.15.4+mixin.0.8.7')
+    compileOnly('io.github.llamalad7:mixinextras-common:0.4.1')
+}
+
+test {
+    useJUnitPlatform()
+}
