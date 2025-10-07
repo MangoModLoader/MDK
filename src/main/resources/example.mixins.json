@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "org.mangorage.mdk.mixins",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BootstrapMixin"
+  ]
+}
